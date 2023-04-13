@@ -33,7 +33,7 @@ library(htmltools)
 library(likert)
 library(weathermetrics)
 
-setwd("C:/Users/david/Nextcloud2/Uni/UniZürich/Master Thesis/Cosimo Munari/Thesis Paper/Data")
+setwd("~/Thesis Paper/Data")
 
 ############
 # plot aesthetic parameters
@@ -49,7 +49,7 @@ setwd("C:/Users/david/Nextcloud2/Uni/UniZürich/Master Thesis/Cosimo Munari/Thes
 #############################################
 #import dataset for natural catastrophes#####
 #############################################
-NatCat <- read_excel("C:/Users/david/Nextcloud2/Uni/UniZürich/Master Thesis/Cosimo Munari/Thesis Paper/Data/Global NatCat_1970.xlsx")
+NatCat <- read_excel("~/Data/Global NatCat_1970.xlsx")
 
 #merge datasets
 data(World)
@@ -256,9 +256,9 @@ x <- as.data.frame(x)
 
 #
 #plot returns matched to top 10 disasters (from xts() data)
-NatCat2000_top15 <- read_excel("C:/Users/david/Nextcloud2/Uni/UniZürich/Master Thesis/Cosimo Munari/Thesis Paper/Data/Global NatCat_2000_top20.xlsx")
-NatCat2000_top10 <- read_excel("C:/Users/david/Nextcloud2/Uni/UniZürich/Master Thesis/Cosimo Munari/Thesis Paper/Data/Global NatCat_2000_top10.xlsx")
-NatCat2000_top52 <- read_excel("C:/Users/david/Nextcloud2/Uni/UniZürich/Master Thesis/Cosimo Munari/Thesis Paper/Data/Global NatCat_2000_top52_R.xlsx")
+NatCat2000_top15 <- read_excel("~/Thesis Paper/Data/Global NatCat_2000_top20.xlsx")
+NatCat2000_top10 <- read_excel("~/Thesis Paper/Data/Global NatCat_2000_top10.xlsx")
+NatCat2000_top52 <- read_excel("~/Thesis Paper/Data/Global NatCat_2000_top52_R.xlsx")
 x_pos <- NatCat2000_top10$`date start`
 
 GDAXI$date <- as.Date(GDAXI$date)
@@ -270,7 +270,7 @@ GDAXI$date <- as.Date(GDAXI$date)
 #####estimating parameters#####
 ###############################
 #load EM-DAT Dataframe
-NatCat_EMDat <- read_excel("C:/Users/david/Nextcloud2/Uni/UniZürich/Master Thesis/Cosimo Munari/Thesis Paper/Data/emdat_public_2022_07_16_query_uid-i1CDMR.xlsx")
+NatCat_EMDat <- read_excel("~/Thesis Paper/Data/emdat_public_2022_07_16_query_uid-i1CDMR.xlsx")
 NatCat_EMDat$Yearclass <- NA
 unique(NatCat_EMDat$`Disaster Type`)
 
@@ -504,8 +504,8 @@ repeat{
 ##################################################
 ###########Prepare output plots###################
 ##################################################
-output_total <- read_excel("C:/Users/david/Nextcloud2/Uni/UniZürich/Master Thesis/Cosimo Munari/Thesis Paper/Data/Output_total.xlsx")
-output_total_prepared <- read_excel("C:/Users/david/Nextcloud2/Uni/UniZürich/Master Thesis/Cosimo Munari/Thesis Paper/Data/Output_total_prepared.xlsx")
+output_total <- read_excel("~/Thesis Paper/Data/Output_total.xlsx")
+output_total_prepared <- read_excel("~/Thesis Paper/Data/Output_total_prepared.xlsx")
 
 # formattable(output_total_prepared)
 
@@ -647,7 +647,7 @@ ggplot()+
 #########################################
 ##Insurance Data Graphics################
 #########################################
-Sigma_explorer_data <- read_excel("C:/Users/david/Nextcloud2/Uni/UniZ?rich/Master Thesis/Cosimo Munari/Thesis Paper/Data/Sigma explorer data.xlsx")
+Sigma_explorer_data <- read_excel("~/Thesis Paper/Data/Sigma explorer data.xlsx")
 
 Sigma_explorer_data <- Sigma_explorer_data %>%
   mutate(`Real premium growth life`=`Real premium growth life`/100)
@@ -693,7 +693,7 @@ ggplot(Sigma_explorer_data)+
 ##Interest rates####
 ####################
 
-ir1 <- read.csv("C:/Users/david/Nextcloud2/Uni/UniZ?rich/Master Thesis/Cosimo Munari/Thesis Paper/Data/Interest rates/WS_CBPOL_D_csv_row.csv", header=T, sep=",")
+ir1 <- read.csv("~/Thesis Paper/Data/Interest rates/WS_CBPOL_D_csv_row.csv", header=T, sep=",")
 ir1 <- ir1[-c(2,3,4,5,6,7,8),]
 ir1 <- ir1[c("Frequency","D.Daily.36","D.Daily.35")]
 ir1$Frequency <- as.character(ir1$Frequency)
@@ -730,17 +730,17 @@ write_xlsx(top_52, "Global NatCat_2000_top52_R.xlsx")
 #######################################################
 ##################Real effects analysis################
 #######################################################
-ALL_ratio <- read_excel("C:/Users/david/Nextcloud2/Uni/UniZ?rich/Master Thesis/Cosimo Munari/Thesis Paper/Data/Ratios/Allstate.xlsx")
+ALL_ratio <- read_excel("~/Thesis Paper/Data/Ratios/Allstate.xlsx")
 ALL_ratio <- ALL_ratio %>%
   mutate(`Net income` = `Net income`/1000)
-TRV_ratio <- read_excel("C:/Users/david/Nextcloud2/Uni/UniZ?rich/Master Thesis/Cosimo Munari/Thesis Paper/Data/Ratios/Travelers.xlsx")
-AXA_ratio <- read_excel("C:/Users/david/Nextcloud2/Uni/UniZ?rich/Master Thesis/Cosimo Munari/Thesis Paper/Data/Ratios/Axa.xlsx")
-Sren_ratio <- read_excel("C:/Users/david/Nextcloud2/Uni/UniZ?rich/Master Thesis/Cosimo Munari/Thesis Paper/Data/Ratios/Swiss Re.xlsx")
-Mren_ratio <- read_excel("C:/Users/david/Nextcloud2/Uni/UniZ?rich/Master Thesis/Cosimo Munari/Thesis Paper/Data/Ratios/Munich Re.xlsx")
-Hren_ratio <- read_excel("C:/Users/david/Nextcloud2/Uni/UniZ?rich/Master Thesis/Cosimo Munari/Thesis Paper/Data/Ratios/Hannover Re.xlsx")
-Vienna_ratio <- read_excel("C:/Users/david/Nextcloud2/Uni/UniZ?rich/Master Thesis/Cosimo Munari/Thesis Paper/Data/Ratios/Vienna ins.xlsx")
-Zurn_ratio <- read_excel("C:/Users/david/Nextcloud2/Uni/UniZ?rich/Master Thesis/Cosimo Munari/Thesis Paper/Data/Ratios/Zurich.xlsx")
-ALV_ratio <- read_excel("C:/Users/david/Nextcloud2/Uni/UniZ?rich/Master Thesis/Cosimo Munari/Thesis Paper/Data/Ratios/Allianz.xlsx")
+TRV_ratio <- read_excel("~/Thesis Paper/Data/Ratios/Travelers.xlsx")
+AXA_ratio <- read_excel("~/Thesis Paper/Data/Ratios/Axa.xlsx")
+Sren_ratio <- read_excel("~/Thesis Paper/Data/Ratios/Swiss Re.xlsx")
+Mren_ratio <- read_excel("~/Thesis Paper/Data/Ratios/Munich Re.xlsx")
+Hren_ratio <- read_excel("~/Thesis Paper/Data/Ratios/Hannover Re.xlsx")
+Vienna_ratio <- read_excel("~/Thesis Paper/Data/Ratios/Vienna ins.xlsx")
+Zurn_ratio <- read_excel("~/Thesis Paper/Data/Ratios/Zurich.xlsx")
+ALV_ratio <- read_excel("~/Thesis Paper/Data/Ratios/Allianz.xlsx")
 
 ratios <- rbind(ALL_ratio, TRV_ratio, AXA_ratio, Sren_ratio, Mren_ratio, Hren_ratio, Vienna_ratio, Zurn_ratio, ALV_ratio)
 #scaling net income
@@ -824,7 +824,7 @@ p4 <- ggplot(data=ratio_prim)+
         legend.text = element_text(size=30),
         legend.title = element_blank())
 
-png(file = "C:/Users/david/Nextcloud2/Uni/UniZ?rich/Master Thesis/Cosimo Munari/Thesis Paper/Data/Graphics/Combined_ratio.png", width = 1920, height = 1080)
+png(file = "~/Thesis Paper/Data/Graphics/Combined_ratio.png", width = 1920, height = 1080)
 grid.arrange(p1,p3,p2,p4, nrow=4)
 dev.off()
 
@@ -950,7 +950,7 @@ ggplot(data=subset(re_dat, Year > "2001-31-12"), aes(x=as.Date(Year), y=`natcat 
         plot.title = element_text(size=50))
 
 #Figure 17
-damo <- read_excel("C:/Users/david/Nextcloud2/Uni/UniZ?rich/Master Thesis/Cosimo Munari/Thesis Paper/Data/Damodaran/Dataset.xlsx")
+damo <- read_excel("~/Thesis Paper/Data/Damodaran/Dataset.xlsx")
 damo$Year <- as.numeric(damo$Year)
 
 ggplot(data=damo, aes(x=Year, y=Inst_holdings, fill=factor(Industry)))+
