@@ -1,4 +1,4 @@
-setwd("C:/Users/david/Nextcloud2/Uni/R_Divers")
+setwd()
 
 library(tidyverse)
 library(plm)
