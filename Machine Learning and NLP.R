@@ -1,4 +1,4 @@
-setwd("C:/Users/david/Desktop/Jonas Masterarbeit SNF")
+setwd()
 
 library(raster)
 library(dplyr)
@@ -291,7 +291,7 @@ Recall <- (sum(preds_check$TP))/(sum(preds_check$TP)+sum(preds_check$FN))
 #   start_tweets = "2015-09-19T00:00:00Z",
 #   end_tweets = "2015-09-26T00:00:00Z",
 #   file = "tweetsdieselgateafter",
-#   data_path = "C:/Users/jfur2/Documents/Master Wirtschaftswissenschaften/Masterarbeit/VW/data2",
+#   data_path = "",
 #   lang = "en",
 #   n = 150000,
 #   remove_promoted = T
@@ -315,7 +315,7 @@ dtm_vwtweets <- create_dtm(it_tweets, vectorizer)
 # transforming data with tf-idf
 dtm_tweets_tfidf <- fit_transform(dtm_vwtweets, tfidf)
 # loading classification model
-glmnet_classifier <- readRDS("C:/Users/david/Desktop/Jonas Masterarbeit SNF/glmnet_classifier.RDS")
+glmnet_classifier <- readRDS("~/glmnet_classifier.RDS")
 # predict probabilities of positiveness
 preds_tweets <- predict(glmnet_classifier, dtm_tweets_tfidf, type = 'response')[ ,1]
 # adding rates to initial dataset
@@ -498,7 +498,7 @@ grid.arrange(p1,p2,nrow=2)
 ####Scrape twitter volume###################
 ############################################
 
-#Token: AAAAAAAAAAAAAAAAAAAAAHMcgAEAAAAAvCMbxdSZMwFDLIeFJ5J2a3fyr78%3DUVgxsg9ZGM5nfoRUQoYLIScsqPfzTBJtwnwlmlsYfke4XLcL39
+#Token: ####
 
 #IMPORTANT NOTE#
 #change stock ticker and company name in the code below (e.g. AAPL -> BA and Apple -> Amgen)
@@ -713,7 +713,7 @@ sum(frame$`#Chevron`, na.rm = T)
 ###########################################################################################################################
 # Some other analysis #####################################################################################################
 ###########################################################################################################################
-setwd("C:/Users/david/Desktop/Analysis/TwitterVolume")
+setwd("~/TwitterVolume")
 
 apple <- count_all_tweets(
   query="apple",
@@ -767,7 +767,7 @@ for (i in nam){
 
 ###get dataframes from list
 #path to save excel files
-setwd("C:/Users/david/Desktop/Analysis/TwitterVolume")
+setwd()
 for (i in 1:length(mylist)){
   assign(nam[i], mylist[[i]])
   write_xlsx(mylist[[i]], paste(nam[i],"_volume.xlsx"), col_names = T)
