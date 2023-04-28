@@ -1,4 +1,4 @@
-setwd(.~)
+setwd("C:/Users/david/Nextcloud2/Uni/R_Divers")
 
 library(tidyverse)
 library(plm)
@@ -27,67 +27,43 @@ ggplot(data=randat)+
 Standard_OLS <- lm(data=randat, x~y)
 #### Gsynth with Stock data ####
 
-Stock_data <- read.csv("Stock_data_7.csv", header=T, sep=",")
+dat_stocks <- read.csv("Stock_returns_data.csv", header=T, sep=",")
 
 #calculate market excess return
-Stock_data <- Stock_data %>%
-  mutate(mkt_excess = dax_return - gbond,
-         ind_excess = return - gbond,
+dat_stocks <- dat_stocks %>%
+  mutate(excess_return_company = return - gbond,
          treat_ind = ifelse(date >= as.Date("2021-06-06"),1,0),
          policy = treat_ind * treatment)
 
 #filter data for time period to calculate the alphas and betas
-gsynth_control <- Stock_data %>%
+gsynth_control <- dat_stocks %>%
   filter(date >= as.Date("2019-02-01") & date <= as.Date("2021-12-31"))%>%
   na.omit()
 
 gsynth_control$date <- as.Date(gsynth_control$date)
 gsynth_control <- as_tibble(gsynth_control)
 
-fits <- lmList(data=gsynth_control, return ~ dax_return | ticker)
-coefs <- as.data.frame(summary(fits)$coefficients)
+fitted_values <- lmList(data=gsynth_control, return ~ dax_return | ticker)
+coefs <- as.data.frame(summary(fitted_values)$coefficients)
 coefs <- coefs[,c(1,5)]
 colnames(coefs) <- c("alpha","beta")
 coefs$ticker <- rownames(coefs)
 
-#ad the results to the data set
-Stock_data <- left_join(Stock_data, coefs, by="ticker")
+dat_stocks <- left_join(dat_stocks, coefs, by="ticker")
 
-#calculate the abnormal return
-Stock_data <- Stock_data %>%
-  mutate(abnormal_return=return-alpha-beta*dax_return)
-
-# Period before the day of interest
-d_bef <- 200
-# Period after the day of interest
-d_af <- 30
-
-Stock_data <- Stock_data %>%
-  filter(date >= (as.Date("2021-06-06") - d_bef) & date <= (as.Date("2021-08-14") + d_af)) %>%
+dat_stocks <- dat_stocks %>%
+  mutate(abnormal_return=return-alpha-beta*dax_return) %>%
+  filter(date >= (as.Date("2021-06-06") - 200) & date <= (as.Date("2021-08-14") + 30)) %>%
   group_by(ticker)%>%
-  mutate(CAR = cumsum(abnormal_return))
+  mutate(car = cumsum(abnormal_return),
+         date = as.Date(date))
 
-# create policy variable
-Stock_data <- Stock_data %>%
-  mutate(start = (ifelse (date >= as.Date("2021-07-20"),1,0))) %>%
-  mutate(int_start = treatment * start)
+######################
+### Apply GSC ########
+######################
 
-Stock_data$date <- as.Date(Stock_data$date) 
-
-###############################################################
-############### Generalized synthetic Control #################
-################# Cumulative Abnormal Return ##################
-###############################################################
-
-#filter data set
-Stock_data <- Stock_data %>%
-  mutate(CAR=CAR,
-         abnormal_return = abnormal_return,
-         ind_excess = ind_excess)
-
-Stock_data <- Stock_data %>%
-  select(ticker, date, treatment, return, dax_return, gbond, mkt_excess, 
-         ind_excess, alpha, beta, abnormal_return, CAR, start, int_start, volume) %>%
+dat_stocks <- dat_stocks %>%
+  select(ticker, date, treatment, car, volume, policy) %>%
   na.omit()
 
 # generate a loop to study parameters
@@ -100,7 +76,7 @@ Stock_data <- Stock_data %>%
 # for (k in 1:max_r){
 #   system.time(
 #     out <- gsynth(abnormal_return ~ int_start, 
-#                   data = Stock_data,
+#                   data = dat_stocks,
 #                   index = c("ticker","date"), 
 #                   force = "two-way", 
 #                   CV = F, 
@@ -129,7 +105,7 @@ Stock_data <- Stock_data %>%
 #   geom_hline(yintercept = 0)+
 #   theme_bw()
 
-# CAR_factors_plot <- ggplot(data=result, aes(x=date, y=att, color=factor(indicator)))+
+# car_factors_plot <- ggplot(data=result, aes(x=date, y=att, color=factor(indicator)))+
 #   geom_line()+
 #   theme_bw()+
 #   scale_color_discrete(name="Number of factors (r)")
@@ -139,15 +115,15 @@ Stock_data <- Stock_data %>%
 #   theme_bw()+
 #   scale_color_discrete(name="Number of factors (r)")
 # 
-# grid.arrange(CAR_factors_plot, Ab_ret_factors_plot)
+# grid.arrange(car_factors_plot, Ab_ret_factors_plot)
 
 # # plot latent factors
 # plot(out, type="factors", xlab="Time")
 
 # Non-loop code from here onwards
 system.time(
-  out <- gsynth(CAR ~ int_start,
-                data = Stock_data,
+  out <- gsynth(car ~ policy,
+                data = dat_stocks,
                 index = c("ticker","date"),
                 force = "two-way",
                 CV = T,
@@ -159,7 +135,6 @@ system.time(
 )
 
 ################################################################################################################
-################################################################################################################
 out.dat <- data.frame(ytr=out$Y.bar, time=out$time, att=out$att)
 out.dat <- out.dat %>%
   rename(Treatment = ytr.Y.tr.bar,
@@ -169,7 +144,7 @@ out.dat <- out.dat %>%
 #own plot with ggplot
 result <- data.frame(att = out$att, counterfact = out$Y.bar[,2], actual = out$Y.bar[,1], date=NA)
 
-date <- Stock_data %>%
+date <- dat_stocks %>%
   filter(ticker=="COP.DE") %>%
   select(date)
 
@@ -179,18 +154,17 @@ ggplot(data=result, aes(x=date))+
   geom_line(aes(y=actual), lwd=1)+
   geom_line(aes(y=counterfact), color="blue", lwd=1, linetype=2)+
   geom_line(aes(y=att), color="firebrick1", linetype=3)+
-  geom_vline(xintercept = c(as.Date("2021-06-06")-15,as.Date("2021-06-06"), as.Date("2021-08-14")))+
+  geom_vline(xintercept = as.Date("2021-06-06"), color="red")+
   geom_hline(yintercept = 0)+
   theme_bw()
 
-atts <- data.frame(att_ind_excess = out$att, att_return = NA)
+atts <- data.frame(att_excess_return_company = out$att, att_return = NA)
 atts$att_return <- out$att
 
 ##########################################################################
 ##########################################################################
 ##########################################################################
-##########################################################################
-##########################################################################
+
 #Gsynth on insurance companies
 ticker <- c("ALL","ALV.DE","ZURN.SW","SREN.SW","CS.PA","TRV","MUV2.DE","HNR1.DE","VIG.VI","^GSPC")
 ticker <- c("ALL","ALV.DE","ZURN.SW","SREN.SW","CS.PA","TRV","MUV2.DE","HNR1.DE","VIG.VI","^GDAXI","^GSPC","^FCHI")
@@ -268,15 +242,15 @@ coefs <- coefs[,c(1,5)]
 colnames(coefs) <- c("alpha","beta")
 coefs$ticker <- rownames(coefs)
 
-#ad the results to the data set
 Stocks_wip <- left_join(Stocks_wip, coefs, by="ticker")
 
 Stocks_wip <- Stocks_wip %>%
   mutate(ab_ret = return-alpha-beta*mkt_excess) %>%
   group_by(ticker) %>%
-  mutate(CAR = cumsum(ab_ret)) %>%
+  mutate(car = cumsum(ab_ret)) %>%
   ungroup()
 
-ggplot(data=Stocks_wip, aes(x=date, y=CAR, color=ticker))+
+ggplot(data=Stocks_wip, aes(x=date, y=car, color=ticker))+
   geom_line()+
   theme_bw()
+
