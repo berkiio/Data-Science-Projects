@@ -10,3 +10,4 @@ The file (Code_MA_David_Annoni)[https://github.com/berkiio/Data-Science-Projects
 ## Side projects ##
 The file (Machine_Learning_and_NLP)[https://github.com/berkiio/Data-Science-Projects/blob/main/Machine%20Learning%20and%20NLP.R] contains work related to the usage of machine learning and neural networks for the classification of twitter sentiment. The labeled dataset can be found here [https://www.kaggle.com/datasets/kazanova/sentiment140]. <br />
 [https://github.com/berkiio/Data-Science-Projects/blob/main/Statistical%20Methods.R] containts some modern methods for causal inference applied to the stock market (GSC). 
+The file (Trading_bot.R)[https://github.com/berkiio/Data-Science-Projects/blob/main/Trading_bot.R] containts a first attempt at writing a crypto trading bot. Later this will be expanded to an equity tradng bot. But first, we use some simple technical methods to identify trading patterns. 
