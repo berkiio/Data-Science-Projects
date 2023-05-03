@@ -1,4 +1,4 @@
-setwd("C:/Users/david/Nextcloud2/Uni/R_Divers/Tradingbot")
+setwd("YOUR_PATH_HERE")
 
 library(tidyverse)
 library(RedditExtractoR)
@@ -305,7 +305,7 @@ repeat{
     list_out = list("Transactions" = df.transactions, "Parameters" = parameters)
     write.xlsx(list_out, file = paste0("Trading_bot_",Tradng_bot_try,".xlsx"))
     
-    png(file = paste0("C:/Users/david/Nextcloud2/Uni/R_Divers/Tradingbot/Run_number_",Tradng_bot_try,".png"), width = 1920, height = 1080)
+    png(file = paste0("YOUR_PATH_HERE/Tradingbot/Run_number_",Tradng_bot_try,".png"), width = 1920, height = 1080)
     grid.arrange(p1,p2,nrow=2)
     dev.off()
     break
